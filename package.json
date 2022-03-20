@@ -4,12 +4,17 @@
   "version": "0.1.0",
   "description": "A Strapi application",
   "scripts": {
-    "develop": "strapi develop",
+    "develop": "trap 'kill 0' SIGINT; strapi develop & npm run watch-admin",
     "start": "strapi start",
-    "build": "strapi build",
-    "strapi": "strapi"
+    "build": "npm run replace-admin && strapi build",
+    "strapi": "strapi",
+    "replace-admin": "cp -Rf src/extensions/admin/* node_modules/@strapi/admin/admin/src",
+    "watch-admin": "./node_modules/.bin/nodemon --watch ./src/extensions/admin -e html,css,js --exec 'npm run build && npm run replace-build'",
+    "replace-build": "cp -Rf ./build/* node_modules/@strapi/admin/build"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
   "dependencies": {
     "@strapi/plugin-i18n": "4.1.5",
     "@strapi/plugin-users-permissions": "4.1.5",
